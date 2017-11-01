@@ -69,10 +69,6 @@ public abstract class AbstractJadeJMDNSServiceListener implements ServiceListene
             if (locator.startsWith(prefix)) {
                 // Cut last part, cut "tcp://"
                 String[] locatorParts = locator.split(" ");
-                if (locatorParts.length < 2) {
-                    return null;
-                }
-
                 return locatorParts[0];
             }
         }
@@ -91,13 +87,14 @@ public abstract class AbstractJadeJMDNSServiceListener implements ServiceListene
      * @return the actual name.
      */
     private String getActualLocalName(String name) {
-        AID aid = new AID(name.replaceAll("?", "."), true);
+        AID aid = new AID(name.replaceAll("\\?", "."), true);
         return aid.getLocalName();
     }
 
     /**
      * Handler when services are added
      */
+    @Override
     public void serviceAdded(ServiceEvent event) {
         String name = getActualLocalName(event.getName());
         // If it is a foreign agent, we must handle the event

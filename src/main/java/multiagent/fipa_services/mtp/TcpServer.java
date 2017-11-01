@@ -171,48 +171,16 @@ public class TcpServer {
                     buffer.append(segment, 0, charsRead);
 
                     int index;
-                    // As long as a (new) whole envelope is included...
                     while ((index = buffer.indexOf(splitter)) != -1) {
-                        // Include the end tag
                         index += splitter.length();
-                        // At least the envelope is included, the message may
-                        // still be missing
                         StringReader envReader = new StringReader(buffer.substring(0, index));
-
-                        // Parse envelope
                         XMLCodec xmlCodec = new XMLCodec(XML_PARSER_CLASS);
                         env = xmlCodec.parse(envReader);
                         logger.log(Level.INFO, "Decoded env: {0}", env);
 
-                        // XXX Modify intended receivers
-                        // Using a set removes duplicates that occur,
-                        // as Rock and Jade interpret FIPA differently.
-                        // dispatch envelope
-                        Set<AID> newIntendedRecvs = new HashSet<AID>();
-                        Iterator<AID> i = env.getAllIntendedReceiver();
-                        while (i.hasNext()) {
-                            AID aid = i.next();
-                            newIntendedRecvs.add(new AID(aid.getName(), true));
-                        }
-                        env.clearAllIntendedReceiver();
-                        for (AID aid : newIntendedRecvs) {
-                            env.addIntendedReceiver(aid);
-                        }
-                        // Same for to
-                        Set<AID> newRecvs = new HashSet<AID>();
-                        Iterator<AID> i0 = env.getAllTo();
-                        while (i0.hasNext()) {
-                            AID aid = i0.next();
-                            newIntendedRecvs.add(new AID(aid.getName(), true));
-                        }
-                        env.clearAllTo();
-                        for (AID aid : newIntendedRecvs) {
-                            env.addTo(aid);
-                        }
-
                         int msgLen = env.getPayloadLength().intValue();
-                        // Keep reading until message is fully included,
-                        // or end of stream is reached
+                        
+                        // ! next line can get stuck if msgLen is not right.
                         while (buffer.length() < index + msgLen
                                 && (charsRead = reader.read(segment, 0, segment.length)) != -1) {
                             buffer.append(segment, 0, charsRead);
@@ -224,30 +192,17 @@ public class TcpServer {
 
                         } else {
                             String msgString = buffer.substring(index, index + msgLen);
-                            // XXX Message parsing + Receiver modification:
                             try {
                                 StringReader msgReader = new StringReader(msgString);
                                 ACLMessage msg = ACLParser.create().parse(msgReader);
-                                Set<AID> newMsgRecvs = new HashSet<AID>();
-                                Iterator<AID> i1 = msg.getAllReceiver();
-                                while (i1.hasNext()) {
-                                    AID aid = i1.next();
-                                    newRecvs.add(new AID(aid.getName(), true));
-                                }
-                                msg.clearAllReceiver();
-                                for (AID aid : newRecvs) {
-                                    msg.addReceiver(aid);
-                                }
                                 msgString = msg.toString();
                             } catch (ParseException ex) {
-                                logger.log(Level.WARNING, "Could not modify message receiver: ", ex);
+                                logger.log(Level.WARNING, "Could not parse ACL message: ", ex);
                             }
 
                             logger.log(Level.INFO, "Dispatching message string: {0}", msgString);
                             dispatcher.dispatchMessage(env, msgString.getBytes());
                         }
-
-                        // Remove envelope and message from the buffer
                         buffer.delete(0, index + msgLen);
                     }
                 }
