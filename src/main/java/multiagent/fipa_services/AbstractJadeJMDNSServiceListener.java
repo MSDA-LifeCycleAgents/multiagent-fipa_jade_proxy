@@ -86,8 +86,12 @@ public abstract class AbstractJadeJMDNSServiceListener implements ServiceListene
      * @param name the given name.
      * @return the actual name.
      */
+    private String cleanName(String name){
+        return name.replaceAll("\\?", ".");
+    }
+    
     private String getActualLocalName(String name) {
-        AID aid = new AID(name.replaceAll("\\?", "."), true);
+        AID aid = new AID(cleanName(name), true);
         return aid.getLocalName();
     }
 
@@ -120,7 +124,7 @@ public abstract class AbstractJadeJMDNSServiceListener implements ServiceListene
                 return;
             }
 
-            handleAddedForeignAgent(endpoint, event.getName());
+            handleAddedForeignAgent(endpoint, cleanName(event.getName()));
         }
     }
 

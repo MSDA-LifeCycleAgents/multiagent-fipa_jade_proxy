@@ -192,22 +192,6 @@ public class TcpMtp implements MTP {
         try {
             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
 
-            // XXX Modify envelope from
-            envlp.setFrom(new AID(envlp.getFrom().getName(), true));
-            // ... and message sender
-            try {
-                ACLMessage msg = ACLParser.create().parse(new StringReader(new String(bytes)));
-                msg.setSender(new AID(msg.getSender().getName(), true));
-                bytes = msg.toString().getBytes();
-            } catch (ParseException e) {
-                logger.log(Level.WARNING, "Could not modify message sender: ", e);
-            }
-            // IMPORTANT: This changes the payload length, so remember to adapt that
-            envlp.setPayloadLength((long)bytes.length);
-
-            // First send envelope in XML encoding
-            // No line break after the envelope, so that the payload
-            // starts immediately after.
             String xmlEnv = XMLCodec.encodeXML(envlp);
             writer.print(xmlEnv);
             // And now message (bytes) XXX use output stream directly, not string!

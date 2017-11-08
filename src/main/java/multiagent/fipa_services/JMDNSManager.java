@@ -70,6 +70,10 @@ public class JMDNSManager {
 
         throw new SocketException("No matching local IPv4 interface found.");
     }
+    
+    public InetAddress getInetAddress(){
+        return inetAddress;
+    }
 
     /**
      * @param rockProxyMTSPort the port the jadeSocketPort listens on.
