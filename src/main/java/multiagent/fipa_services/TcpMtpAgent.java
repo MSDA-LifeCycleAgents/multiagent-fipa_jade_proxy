@@ -4,6 +4,7 @@ import multiagent.fipa_services.mtp.TcpMtp;
 import multiagent.fipa_services.mtp.TcpServer;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.AMSService;
 import jade.domain.FIPAAgentManagement.AMSAgentDescription;
 import jade.domain.FIPAException;
@@ -30,18 +31,26 @@ public class TcpMtpAgent extends Agent {
         }
 
         @Override
-        public void handleAddedForeignAgent(String address, String agentName) {
+        public void handleAddedForeignAgent(String address, final String agentName) {
             try {
                 logger.log(Level.INFO, "Registering {0} ({1}) with the AMS.",
                         new Object[]{agentName, address});
 
-                AID aid = new AID(agentName, true);
+                final AID aid = new AID(agentName, true);
                 aid.addAddresses(address);
                 AMSAgentDescription amsad = new AMSAgentDescription();
                 amsad.setName(aid);
                 amsad.setState(AMSAgentDescription.ACTIVE);
-
+                
                 AMSService.register(TcpMtpAgent.this, amsad);
+                
+                TcpMtpAgent.this.addBehaviour(new HeartbeatBehaviour(TcpMtpAgent.this, 20000, aid) {
+                    @Override
+                    protected void onUnavailable() {
+                        // Insert remove agent logic here..
+                    }
+                });
+                
             } catch (FIPAException ex) {
                 logger.log(Level.WARNING, "Could not register " + agentName, ex);
             }

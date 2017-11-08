@@ -43,6 +43,13 @@
 
     <repositories>
         <repository>
+          <id>central</id>
+          <url>https://repo1.maven.org/maven2</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+        </repository>
+        <repository>
             <id>tilab</id>
             <url>http://jade.tilab.com/maven/</url>
         </repository>
@@ -78,10 +85,11 @@
             <version>4.0.1-M1-RELEASE</version>
         </dependency>
         -->
+        <!-- https://mvnrepository.com/artifact/org.jmdns/jmdns -->
         <dependency>
-            <groupId>javax.jmdns</groupId>
+            <groupId>org.jmdns</groupId>
             <artifactId>jmdns</artifactId>
-            <version>3.4.1</version>
+            <version>3.5.2</version>
         </dependency>
         <dependency>
             <groupId>crimson</groupId>
