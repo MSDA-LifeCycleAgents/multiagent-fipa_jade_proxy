@@ -31,6 +31,15 @@ public class AgentJMDNSRegisterBehaviour extends AMSSubscriber {
         ip = ip.replaceFirst("http://", "");
         return ip.split(":")[0];
     }
+    
+    private boolean containsAddress(String[] addresses, String needle){
+        for(String address : addresses){
+            if(getIpFromAddress(address).equals(getIpFromAddress(needle))){
+                return true;
+            }
+        }
+        return false;
+    }
 
     protected void installHandlers(Map handlers) {
 
@@ -40,12 +49,10 @@ public class AgentJMDNSRegisterBehaviour extends AMSSubscriber {
                 BornAgent ba = (BornAgent) event;
 
                 // Only register local agents, as external agents are already found via mDNS
-                for(String address : ba.getAgent().getAddressesArray()){
-                    if(getIpFromAddress(address).equals(getIpFromAddress(hostAddress))){
-                        jmdnsManager.registerJadeAgent(ba.getAgent().getName());
-                        break;
-                    }
-                }     
+                String[] addresses = ba.getAgent().getAddressesArray();
+                if(containsAddress(addresses, hostAddress) || addresses.length < 1){
+                    jmdnsManager.registerJadeAgent(ba.getAgent().getName());
+                }    
             }
         };
 
