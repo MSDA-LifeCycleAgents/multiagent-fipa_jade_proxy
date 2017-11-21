@@ -8,6 +8,7 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.domain.AMSService;
 import jade.domain.FIPAAgentManagement.AMSAgentDescription;
 import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
 import jade.mtp.MTPException;
 import jade.wrapper.StaleProxyException;
 import java.io.IOException;
@@ -43,6 +44,12 @@ public class TcpMtpAgent extends Agent {
                 amsad.setState(AMSAgentDescription.ACTIVE);
                 
                 AMSService.register(TcpMtpAgent.this, amsad);
+                
+                ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+                request.addReceiver(aid);
+                request.setContent("(instructions )");
+                send(request);
+                ACLMessage response = receive();
                 
                 TcpMtpAgent.this.addBehaviour(new HeartbeatBehaviour(TcpMtpAgent.this, 20000, aid) {
                     @Override
