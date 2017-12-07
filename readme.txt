@@ -122,10 +122,13 @@ Change the source/target specification to the desired java version in the follow
 
 == Agent Configuration ==
 
+To use any of the following communication agents, add a global.properties file to your project. Add the code snipplet to the properties file
+and adjust the settings to your specific situation.
+
+
 === Mail Agent ===
 
-To use the mail agent, add a global.properties file to your project. Add the following code snipplet to the properties file
-and adjust the settings to your specific situation.
+Configuration code snipplet:
 
 # smtp mail server configuration
 
@@ -141,10 +144,27 @@ mail.default_subject=Multi Agent Life Cycle Framework Notification
 
 An email can be sent by sending a request to the MailAgent with the following content (note that the subject tag is optional).
 
-<email>
-	<message>Insert e-mail body here</message>
+<message>
+	<content>Insert e-mail body here</content>
 	<subject>Insert subject here</subject>	
 	<to>receiver@email.com</to>
-</email>
+</message>
 
+
+=== Slack Agent ===
+
+Configuration code snipplet:
+
+# slack configuration (make sure that slackbot is a member of the selected channel)
+
+slack.auth_token=
+
+slack.default_channel=general
+
+To send a slack message, send a requect to the SlackAgent with the following content.
+
+<message>
+	<content>Insert message body here</content>
+	<channel>random</channel>
+</message>
 

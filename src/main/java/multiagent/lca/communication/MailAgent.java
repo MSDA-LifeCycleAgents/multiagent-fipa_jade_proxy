@@ -48,7 +48,7 @@ public class MailAgent extends Agent{
                             Document xml = XmlParser.loadXMLFromString(content);
                             Element root = xml.getDocumentElement();
                             
-                            String message = XmlParser.getString("message", root);
+                            String message = XmlParser.getString("content", root);
                             String subject = XmlParser.getString("subject", root);
                             String to = XmlParser.getString("to", root);
                             
