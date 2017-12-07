@@ -128,16 +128,12 @@ To use the mail agent, add a global.properties file to your project. Add the fol
 and adjust the settings to your specific situation.
 
 # smtp mail server configuration
-
 mail.host=smtp.gmail.com
-
 mail.port=587
-
 mail.from=
-
 mail.password=
-
 mail.default_subject=Multi Agent Life Cycle Framework Notification
+
 
 An email can be sent by sending a request to the MailAgent with the following content (note that the subject tag is optional).
 
