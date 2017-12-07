@@ -122,8 +122,7 @@ Change the source/target specification to the desired java version in the follow
 
 == Agent Configuration ==
 
-To use any of the following communication agents, add a global.properties file to your project. Add the code snipplet to the properties file
-and adjust the settings to your specific situation.
+To use any of the following communication agents, add a global.properties file to your project. Add the code snipplet to the properties file and adjust the settings to your specific situation.
 
 
 === Mail Agent ===
@@ -152,10 +151,9 @@ An email can be sent by sending a request to the MailAgent with the following co
 Configuration code snipplet:
 
 # slack configuration (make sure that slackbot is a member of the selected channel)
-
 slack.auth_token=
-
 slack.default_channel=general
+
 
 To send a slack message, send a requect to the SlackAgent with the following content.
 
