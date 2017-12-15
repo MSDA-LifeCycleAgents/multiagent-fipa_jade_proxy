@@ -7,6 +7,7 @@ import jade.domain.FIPAAgentManagement.Envelope;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.ACLParser;
 import jade.lang.acl.ParseException;
+import jade.lang.acl.TokenMgrError;
 import jade.mtp.InChannel;
 import jade.mtp.MTPException;
 import jade.mtp.http.XMLCodec;
@@ -17,11 +18,11 @@ import java.io.StringReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.ParserConfigurationException;
+import multiagent.fipa_services.parser.XmlParser;
+import org.xml.sax.SAXException;
 
 /**
  * A TcpServer that listens for incoming envelopes and forwards them
@@ -198,6 +199,15 @@ public class TcpServer {
                                 msgString = msg.toString();
                             } catch (ParseException ex) {
                                 logger.log(Level.WARNING, "Could not parse ACL message: ", ex);
+                            } catch (TokenMgrError e){
+                                try {
+                                    // this means it has encountered an unexpected token, like '<'. So we'll try to parse the message to XML.
+                                    ACLMessage msg = XmlParser.parse(msgString, env);
+                                    msgString = msg.toString();
+                                } catch (ParserConfigurationException | SAXException ex) {
+                                    logger.log(Level.WARNING, "Could not parse ACL message to XML: ", ex);
+                                    return;
+                                }
                             }
 
                             logger.log(Level.INFO, "Dispatching message string: {0}", msgString);
